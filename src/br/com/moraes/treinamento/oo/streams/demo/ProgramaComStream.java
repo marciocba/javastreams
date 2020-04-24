@@ -1,60 +1,104 @@
-package br.com.munif.treinamento.oo.streams;
+package br.com.moraes.treinamento.oo.streams.demo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class Programa2 {
+import br.com.munif.treinamento.oo.streams.Nome;
 
+public class ProgramaComStream {
+	static List<Nome> nomes = nomesFrequentes();
 	public static void main(String[] args) {
 		System.out.println("Inicio de Streams");
-		List<Nome> nomes = nomesFrequentes();
-/*		System.out.println("Primeiro " + primeiro(nomes));
-		System.out.println("Total da amostra " + somaFrequencias(nomes));
-		System.out.println("Total da amostra " + somaFrequenciasForEach(nomes));
-		mostreOsMaisDe2M(nomes);
-		System.out.println("Mais de 2M " + filtraMaisDe2M(nomes));
+		
+	// exemplo interface	
+		GreetingService greetService1 = (message) -> {
+			List<Nome> toReturn = nomes.stream()
+			        .filter(nome -> nome.getFrequencia()>= 100000 && nome.getFrequencia() <= 200000)
+			        .collect(Collectors.toList());
+			System.out.println(message + toReturn.size());		
+	      };
+	      
+	    greetService1.sayMessage("Tem mais 100.000 e menos de 200.000 (STREAM)=>");
+
+        greetService1 = message -> 
+	    	System.out.println(message + noItervaloStream(nomes, 0, 99999).size());			           
+        greetService1.sayMessage("Tem mais 0 e menos de 99.999 (STREAM)=>");
+      
+        greetService1 = message -> 
+			System.out.println(message + frequenciaImparStream(nomes).size());			           
+        greetService1.sayMessage("Frequencia Impar (STREAM)=>");
+        greetService1 = message -> 
+		System.out.println(message + frequenciaParStream(nomes).size());			           
+	    greetService1.sayMessage("Frequencia Par (STREAM)=>");
+		
+		System.out.println("***************EXEMPLO PHONE LIST");
+		phoneList("Mary");
+		System.out.println("---------------EXEMPLO COM STREAMS-");
+		System.out.println("Total da amostra Stream " + somaFrequenciasStream(nomes));
+		System.out.println("mostreOsMaisDe2M");
+		mostreOsMaisDe2M(nomes,2000000);
+		System.out.print("mostreOsMaisDe2M stream ");
+		mostreOsMaisDe2MStream(nomes,2000000);
+		System.out.println("Mais de 2M Stream " + filtraMaisDe2MStream(nomes,2000000));
 		System.out.println("Mais Frequente " + maisFrequente(nomes));
+		System.out.println("Mais Frequente Stream " + maisFrequenteStream(nomes));
 		System.out.println("Menos Frequente " + menosFrequente(nomes));
+		System.out.println("Menos Frequente Stream " + menosFrequenteStream(nomes));
 		System.out.println("Com 5 letras " + filtraComXLetras(nomes, 5));
-		System.out.println("Com 6 letras " + filtraComXLetras(nomes, 6));
-		System.out.println("Mais Frequente " + maisFrequente(filtraComXLetras(nomes, 6)));
-		System.out.println("Menos Frequente " + menosFrequente(filtraComXLetras(nomes, 6)));
+		System.out.println("Com 5 letras Stream" + filtraComXLetrasStream(nomes, 5));
+		System.out.println("Mais Frequente 5 letras " + maisFrequenteStream(filtraComXLetrasStream(nomes, 5)));
+		System.out.println("Mais Frequente 5 letras Stream " + maisFrequenteStream(filtraComXLetrasStream(nomes, 5)));
+		System.out.println("Menos Frequente 5 letras " + menosFrequenteStream(filtraComXLetrasStream(nomes, 5)));
+		System.out.println("Menos Frequente 5 letras Stream " + menosFrequenteStream(filtraComXLetrasStream(nomes, 5)));
 		System.out.println("Média de frequencia " + somaFrequencias(nomes) / nomes.size());
-		System.out.println("Média de frequencia " + (1.0 * somaFrequencias(nomes) / nomes.size()));
-		System.out.println("Média de frequencia " + Math.round(1.0 * somaFrequencias(nomes) / nomes.size()));
-*/
-		System.out.println("Tem mais 100.000 e menos de 200.000 " + noItervalo(nomes, 100000, 200000).size());
-		System.out.println("Tem mais 0 e menos de 99.999 " + noItervalo(nomes, 0, 99999).size());
-		System.out.println("2Tem mais 100.000 e menos de 200.000 " + noItervaloStream(nomes, 100000, 200000).size());
-		System.out.println("2Tem mais 0 e menos de 99.999 " + noItervaloStream(nomes, 0, 99999).size());
-		System.out.println("Frequencia Impar " + frequenciaImpar(nomes).size());
-		System.out.println("Frequencia Par " + frequenciaPar(nomes).size());
-		System.out.println("2Frequencia Impar " + frequenciaImparStream(nomes).size());
-		System.out.println("2Frequencia Par " + frequenciaParStream(nomes).size());
-
-		System.out.println("Total " + nomes.size());
-		System.out.println("Contem Maria " + subString(nomes, "ana"));
-
+		System.out.println("Média de frequencia double " + (1.0 * somaFrequencias(nomes) / nomes.size()));
+		System.out.println("Média de frequencia Stream " + mediaFrequenciasStream(nomes));
+		System.out.println("Tem mais 100.000 e menos de 200.000 Stream" + noItervaloStream(nomes, 100000, 200000).size());
+		System.out.println("Tem mais 0 e menos de 99.999 Stream" + noItervaloStream(nomes, 0, 99999).size());
+		System.out.println("Contem Maria " + subString(nomes, "Maria"));
+		System.out.println("Contem Maria Stream" + subStringStream(nomes, "Maria"));
+		System.out.println("Frequencia Impar Stream " + frequenciaImparStream(nomes).size());
+		System.out.println("Frequencia Par Stream " + frequenciaParStream(nomes).size());
 
 	}
-
-
-
-
-	private static List<Nome> noItervalo(List<Nome> nomes, int min, int max) {
-		List<Nome> toReturn = new ArrayList<Nome>();
-		for (Nome nome : nomes) {
-			// && || !      Operadores lógicos
-			// Não são & | ^           1100 | 0011 = 1111 
-			if (nome.getFrequencia() >= min && nome.getFrequencia() <= max) {
-				toReturn.add(nome);
-			}
-		}
-		return toReturn;
+	interface GreetingService {
+	      void sayMessage(String message);
 	}
 	
+
+	 static void printNomes(Predicate<Nome> tester)
+	   {
+	      for (Nome nome: nomes)
+	         if (tester.test(nome))
+	            nome.toString();
+	   }
+
+	 static void phoneList(String nome)
+	   {
+		 Map < String, List < String >> phoneNumbers = new HashMap < String, List < String >> ();
+		 phoneNumbers.put("John Lawson", Arrays.asList("3232312323", "8933555472"));
+		 phoneNumbers.put("Mary Jane", Arrays.asList("12323344", "492648333"));
+		 phoneNumbers.put("Mary Lou", Arrays.asList("77323344", "938448333"));
+		 
+		 Map < String, List < String >> filteredNumbers = phoneNumbers.entrySet().stream()
+		     .filter(x -> x.getKey().contains(nome))
+		     .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+		 filteredNumbers.forEach((key, value) -> {
+		     System.out.println("Name: " + key + ": ");
+		     value.forEach(System.out::println);
+		 });
+		      
+	   }
+	
+		
 	private static List<Nome> noItervaloStream(List<Nome> nomes, int min, int max) {
 		List<Nome> toReturn = nomes.stream()
 		        .filter(nome -> nome.getFrequencia()>= min && nome.getFrequencia() <= max)
@@ -62,16 +106,41 @@ public class Programa2 {
 		return toReturn;
 	}
 	
-	
-	private static List<Nome> frequenciaImpar(List<Nome> nomes) {
-		List<Nome> toReturn = new ArrayList<Nome>();
-		for (Nome nome : nomes) {
-			if (nome.getFrequencia() % 2 == 1 ) {
-				toReturn.add(nome);
+	 private static List<Nome> subString(List<Nome> nomes,String subString) {
+			List<Nome> toReturn = new ArrayList<Nome>();
+			for (Nome nome : nomes) {
+				if (nome.getNome().toLowerCase().contains(subString.toLowerCase()) ) {
+					toReturn.add(nome);
+				}
 			}
+			return toReturn;
 		}
-		return toReturn;
-	}
+	 private static List<Nome> subStringStream(List<Nome> nomes,String subString) {
+		 Map<String, String> result1 = nomes.stream().collect(
+             Collectors.toMap(Nome::getNome, Nome::getNome));
+		 //como map
+		 Map<String, String> resultFilted = result1.entrySet().stream()
+				 .filter(x -> x.getKey().contains(subString.toUpperCase()))
+				 
+				 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+//como list
+		 List resultFilted2 = result1.entrySet().stream()
+				 .filter(x -> x.getKey().contains(subString.toUpperCase()))
+				 
+				 .collect(Collectors.toList());
+
+		 //resultFilted.forEach((key, value) -> {
+		  //   System.out.println("Name: " + key + ": "+value);		     
+		 //});
+		 List<Nome> toReturn = nomes.stream()
+			        .filter(nome -> nome.getNome().contains(subString.toUpperCase()))
+			        .collect(Collectors.toList());
+		 	
+		 return toReturn;       
+		// Map < String, List < Nome >> phoneNumbers = new HashMap < String, nomes> ();
+		//	return toReturn;
+		}
+	
 	private static List<Nome> frequenciaImparStream(List<Nome> nomes) {
 		// TODO Auto-generated method stub
 		List<Nome> toReturn = nomes.stream()
@@ -79,15 +148,7 @@ public class Programa2 {
 		        .collect(Collectors.toList());
 		return toReturn;
 	}	
-	private static List<Nome> subString(List<Nome> nomes,String subString) {
-		List<Nome> toReturn = new ArrayList<Nome>();
-		for (Nome nome : nomes) {
-			if (nome.getNome().toLowerCase().contains(subString.toLowerCase()) ) {
-				toReturn.add(nome);
-			}
-		}
-		return toReturn;
-	}
+	
 	private static List<Nome> frequenciaParStream(List<Nome> nomes) {
 		// TODO Auto-generated method stub
 		List<Nome> toReturn = nomes.stream()
@@ -119,6 +180,46 @@ public class Programa2 {
 		return soma;
 	}
 
+	public static int somaFrequenciasStream(List<Nome> nomes) {
+		Integer soma = nomes.stream()
+				  .map(nome -> nome.getFrequencia())
+				  .reduce(0, Integer::sum);
+		return soma;
+	}
+	
+	public static IntSummaryStatistics estatistica(List<Nome> nomes) {
+		IntSummaryStatistics result = nomes.stream()
+                .mapToInt((nome) -> nome.getFrequencia())
+                .summaryStatistics();
+		return result;
+	}
+	public static Double mediaFrequenciasStream(List<Nome> nomes) {
+		
+	
+		
+		// AVERAGE -- Solution 1
+		IntSummaryStatistics stats = nomes.stream()
+                .mapToInt((nome) -> nome.getFrequencia())
+                .summaryStatistics();
+		System.out.println(stats);
+		
+		// AVERAGE -- Solution 2
+		OptionalDouble media = nomes.stream()
+	    .mapToInt(nome -> nome.getFrequencia()) //
+	    .average(); //
+	    //.ifPresent(avg -> System.out.println("Average found is " + avg));
+
+		// AVERAGE -- Solution 3
+		double media2 = nomes.stream()
+			    .mapToInt(nome -> nome.getFrequencia()) //
+			    .average()
+			    .getAsDouble();//
+			    //.ifPresent(avg -> System.out.println("Average found is " + avg));
+
+		return media2;
+	}
+	
+	//falta
 	public static int somaFrequenciasForEach(List<Nome> nomes) {
 		int soma = 0;
 		for (Nome nome : nomes) {
@@ -126,25 +227,43 @@ public class Programa2 {
 		}
 		return soma;
 	}
+	
 
-	public static void mostreOsMaisDe2M(List<Nome> nomes) {
+	//falta
+	public static void mostreOsMaisDe2M(List<Nome> nomes,int frequencia) {
 		for (Nome nome : nomes) {
-			if (nome.getFrequencia() >= 2000000) {
+			if (nome.getFrequencia() >=  frequencia) {
 				System.out.println(nome);
 			}
 		}
 	}
+	public static void mostreOsMaisDe2MStream(List<Nome> nomes,int frequencia) {
+		List<Nome> toReturn = nomes.stream()
+		        .filter(nome -> nome.getFrequencia()>= frequencia)
+		        .collect(Collectors.toList());
+		System.out.println(toReturn);
+		//return toReturn;
+	}
 
-	public static List<Nome> filtraMaisDe2M(List<Nome> nomes) {
+//falta
+	public static List<Nome> filtraMaisDe2M(List<Nome> nomes, int frequencia) {
 		List<Nome> toReturn = new ArrayList<Nome>();
 		for (Nome nome : nomes) {
-			if (nome.getFrequencia() >= 2000000) {
+			if (nome.getFrequencia() >= frequencia) {
 				toReturn.add(nome);
 			}
 		}
+		
 		return toReturn;
 	}
-
+	
+	public static List<Nome> filtraMaisDe2MStream(List<Nome> nomes, int frequencia) {
+		List<Nome> toReturn = nomes.stream()
+		        .filter(nome -> nome.getFrequencia()>= frequencia)
+		        .collect(Collectors.toList());
+		return toReturn;
+	}
+	
 	public static List<Nome> filtraComXLetras(List<Nome> nomes, int tamanho) {
 		List<Nome> toReturn = new ArrayList<Nome>();
 		for (Nome candidato : nomes) {
@@ -152,6 +271,14 @@ public class Programa2 {
 				toReturn.add(candidato);
 			}
 		}
+		return toReturn;
+	}
+	
+
+	public static List<Nome> filtraComXLetrasStream(List<Nome> nomes, int tamanho) {
+		List<Nome> toReturn = nomes.stream()
+		        .filter(nome -> nome.getNome().length()==tamanho)
+		        .collect(Collectors.toList());
 		return toReturn;
 	}
 
@@ -168,6 +295,22 @@ public class Programa2 {
 		return maisFrequente;
 	}
 
+	public static Nome maisFrequenteStream(List<Nome> nomes) {
+		if (nomes.size() == 0) {
+			throw new RuntimeException("Lista vazia");
+		}
+		Nome maisFrequente = nomes.get(0);
+		
+		Comparator<Nome> comparator = Comparator.comparing( Nome::getFrequencia );
+		
+		// Get Min or Max Object
+		Nome minObject = nomes.stream().min(comparator).get();
+		Nome maxObject = nomes.stream().max(comparator).get();
+		
+		maisFrequente = maxObject;
+		
+		return maisFrequente;
+	}
 	public static Nome menosFrequente(List<Nome> nomes) {
 		if (nomes.size() == 0) {
 			throw new RuntimeException("Lista vazia");
@@ -178,6 +321,21 @@ public class Programa2 {
 				menosFrequente = nome;
 			}
 		}
+		return menosFrequente;
+	}
+	public static Nome menosFrequenteStream(List<Nome> nomes) {
+		if (nomes.size() == 0) {
+			throw new RuntimeException("Lista vazia");
+		}
+		Nome menosFrequente = nomes.get(0);
+		Comparator<Nome> comparator = Comparator.comparing( Nome::getFrequencia );
+		
+		// Get Min or Max Object
+		Nome minObject = nomes.stream().min(comparator).get();
+		Nome maxObject = nomes.stream().max(comparator).get();
+
+		menosFrequente = minObject;
+		
 		return menosFrequente;
 	}
 
